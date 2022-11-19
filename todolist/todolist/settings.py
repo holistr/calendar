@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+import env as env
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -85,8 +86,12 @@ WSGI_APPLICATION = 'todolist.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env['POSTGRES_DB'],
+        'USER': env['POSTGRES_USER'],
+        'PASSWORD': env['POSTGRES_PASSWORD'],
+        'HOST': env['POSTGRES_HOST'],
+        'PORT': env['POSTGRES_PORT'],
     }
 }
 
@@ -128,3 +133,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'core.User'
