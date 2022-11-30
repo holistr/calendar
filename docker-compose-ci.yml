@@ -38,7 +38,7 @@ services:
        db:
          condition: service_healthy
      command: >
-       sh -c "python3 todolist_ci/manage.py migrate"
+       sh -c "python3 todolist_ci/todolist/manage.py migrate"
   db:
     image: postgres:latest
     environment:
