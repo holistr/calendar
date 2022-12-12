@@ -26,8 +26,6 @@ services:
         condition: service_completed_successfully
   migrations:
      image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#     env_file:
-#       - .env
      environment:
        DEBUG: True
        POSTGRES_HOST: "db"
@@ -36,6 +34,8 @@ services:
        POSTGRES_DB: ${POSTGRES_DB}
        POSTGRES_PORT: ${POSTGRES_PORT}
        SECRET_KEY: ${SECRET_KEY}
+       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
      depends_on:
        db:
          condition: service_healthy
