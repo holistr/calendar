@@ -25,7 +25,7 @@ services:
      build:
        context: .
      environment:
-       POSTGRES_HOST: 'db'
+       POSTGRES_HOST: 'localhost'
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: 123456
        POSTGRES_DB: postgres
