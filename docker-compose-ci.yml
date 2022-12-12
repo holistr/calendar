@@ -27,9 +27,8 @@ services:
   migrations:
      image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
      env_file:
-       - .docker-ci-env
+       - .env
 #     environment:
-
 #       DEBUG: True
 #       POSTGRES_HOST: "db"
 #       POSTGRES_USER: ${POSTGRES_USER}
