@@ -31,7 +31,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         instance = super().create(validated_data)
         return instance
 
-
     class Meta:
         model = USER_MODEL
         fields = '__all__'
