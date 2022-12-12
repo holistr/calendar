@@ -27,7 +27,7 @@ services:
   migrations:
      image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
      env_file:
-       - .env
+       - .docker-ci-env
 #     environment:
 
 #       DEBUG: True
