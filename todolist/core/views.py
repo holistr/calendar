@@ -13,12 +13,9 @@ class RegistrationView(generics.CreateAPIView):
     model = USER_MODEL
     serializer_class = serializers.RegistrationSerializer
 
-    # def perform_create(self, serializer):
-    #     super().perform_create(serializer)
-    #     login(self.request, serializer.instance, 'django.contrib.auth.backends.ModelBackend')
-    #
 
 class LoginView(generics.GenericAPIView):
+    model = USER_MODEL
     serializer_class = serializers.LoginSerializer
 
     def post(self, request, *args, **kwargs):
