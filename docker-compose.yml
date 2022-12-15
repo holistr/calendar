@@ -11,9 +11,8 @@ services:
   api:
     build:
       context: .
-    restart: always
     env_file:
-      - .env
+      - .env_example
     depends_on:
       db:
         condition: service_healthy
