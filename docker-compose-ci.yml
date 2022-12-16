@@ -4,17 +4,15 @@ services:
   frontend:
     image: sermalenk/skypro-front:lesson-36
     restart: always
-    networks:
-      - backend
     depends_on:
       - api
     ports:
-      - "80:80"
+      - '80:80'
+#    networks:
+#      - backend
+
   api:
     image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-    restart: always
-    networks:
-      - backend
     environment:
       DEBUG: ${DEBUG}
       POSTGRES_HOST: ${POSTGRES_HOST}
@@ -30,14 +28,14 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-  migrations:
+#    networks:
+#      - backend
 
+  migrations:
      image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-     networks:
-       - backend
      environment:
        DEBUG: True
-       POSTGRES_HOST: "db"
+       POSTGRES_HOST: 'db'
        POSTGRES_USER: ${POSTGRES_USER}
        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
        POSTGRES_DB: ${POSTGRES_DB}
@@ -50,10 +48,9 @@ services:
          condition: service_healthy
      command: >
        sh -c "python3 todolist/manage.py migrate"
+
   db:
     image: postgres:latest
-    networks:
-      - backend
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -62,11 +59,12 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
       retries: 5
-
+#    networks:
+#      - backend
 
 
 volumes:

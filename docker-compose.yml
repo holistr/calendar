@@ -3,19 +3,17 @@ version: '3.9'
 services:
   frontend:
     image: sermalenk/skypro-front:lesson-36
-    networks:
-      - backend
     restart: always
     depends_on:
       - api
     ports:
       - '80:80'
+#    networks:
+#      - backend
+
   api:
     build:
       context: .
-    networks:
-      - backend
-    restart: always
     environment:
       POSTGRES_HOST: 'db'
       POSTGRES_USER: 'postgres'
@@ -29,13 +27,12 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-#    ports:
-#      - '60:60'
+#    networks:
+#      - backend
+
   migrations:
      build:
        context: .
-     networks:
-       - backend
      environment:
        POSTGRES_HOST: 'db'
        POSTGRES_USER: 'postgres'
@@ -49,10 +46,9 @@ services:
          condition: service_healthy
      command: >
        sh -c "python3 todolist/manage.py migrate"
+
   db:
     image: postgres:latest
-    networks:
-      - backend
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
@@ -62,6 +58,9 @@ services:
       - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
+#    networks:
+#      - backend
+
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -d postgres']
       interval: 5s
