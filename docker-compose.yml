@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   frontend:
-    image: sermalenk/skypro-front:lesson-35
+    image: sermalenk/skypro-front:lesson-36
     restart: always
     depends_on:
       - api
@@ -12,23 +12,29 @@ services:
     build:
       context: .
     restart: always
-    env_file:
-      - .env_example
+    environment:
+      POSTGRES_HOST: 'db'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: '123456'
+      POSTGRES_DB: 'postgres'
+      SECRET_KEY: 'very_secret_key'
+      POSTGRES_PORT: '5432'
+      DEBUG: True
     depends_on:
       db:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
 #    ports:
-#      - '8000:8000'
+#      - '60:60'
   migrations:
      build:
        context: .
      environment:
        POSTGRES_HOST: 'db'
-       POSTGRES_USER: postgres
-       POSTGRES_PASSWORD: 123456
-       POSTGRES_DB: postgres
+       POSTGRES_USER: 'postgres'
+       POSTGRES_PASSWORD: '123456'
+       POSTGRES_DB: 'postgres'
        SECRET_KEY: 'very_secret_key'
        POSTGRES_PORT: '5432'
        DEBUG: True
