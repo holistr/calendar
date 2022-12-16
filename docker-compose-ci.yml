@@ -4,6 +4,8 @@ services:
   frontend:
     image: sermalenk/skypro-front:lesson-36
     restart: always
+    networks:
+      - backend
     depends_on:
       - api
     ports:
@@ -11,6 +13,8 @@ services:
   api:
     image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
+    networks:
+      - backend
     environment:
       DEBUG: ${DEBUG}
       POSTGRES_HOST: ${POSTGRES_HOST}
@@ -27,7 +31,10 @@ services:
       migrations:
         condition: service_completed_successfully
   migrations:
+
      image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+     networks:
+       - backend
      environment:
        DEBUG: True
        POSTGRES_HOST: "db"
@@ -45,6 +52,8 @@ services:
        sh -c "python3 todolist/manage.py migrate"
   db:
     image: postgres:latest
+    networks:
+      - backend
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

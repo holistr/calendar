@@ -3,6 +3,8 @@ version: '3.9'
 services:
   frontend:
     image: sermalenk/skypro-front:lesson-36
+    networks:
+      - backend
     restart: always
     depends_on:
       - api
@@ -11,6 +13,8 @@ services:
   api:
     build:
       context: .
+    networks:
+      - backend
     restart: always
     environment:
       POSTGRES_HOST: 'db'
@@ -30,6 +34,8 @@ services:
   migrations:
      build:
        context: .
+     networks:
+       - backend
      environment:
        POSTGRES_HOST: 'db'
        POSTGRES_USER: 'postgres'
@@ -45,13 +51,13 @@ services:
        sh -c "python3 todolist/manage.py migrate"
   db:
     image: postgres:latest
+    networks:
+      - backend
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: postgres
     restart: always
-#    env_file:
-#      - .env
     ports:
       - '5432:5432'
     volumes:
