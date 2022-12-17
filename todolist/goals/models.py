@@ -23,6 +23,10 @@ class GoalCategory(models.Model):
 
 
 class Goal(models.Model):
+    class Meta:
+        verbose_name = 'Цель'
+        verbose_name_plural = 'Цели'
+
     class Status(models.IntegerChoices):
         to_do = 1, 'К выполнению'
         in_progress = 2, 'В процессе'
