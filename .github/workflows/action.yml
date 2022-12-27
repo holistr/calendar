@@ -52,4 +52,4 @@ jobs:
             cd todolist_ci
             echo ${{ secrets.PASSWORD }} | docker-compose down
             echo ${{ secrets.PASSWORD }} | docker-compose up -d
-            docker system prune -a -f
+#            docker system prune -a -f
