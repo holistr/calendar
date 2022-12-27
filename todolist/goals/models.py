@@ -35,7 +35,7 @@ class Board(DatesModelMixin):
 class BoardParticipant(DatesModelMixin):
     class Meta:
         unique_together = ('board', 'user')
-        verbose_name = 'Участники'
+        verbose_name = 'Участник'
         verbose_name_plural = 'Участники'
 
     class Role(models.IntegerChoices):
