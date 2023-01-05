@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         self.tg_client.send_message(
             chat_id=msg.chat.id,
-            text=f'Вот список ваших целей: \n {goals_str}'
+            text=f'Вот список ваших целей:\n {goals_str}'
         )
 
     def handle_message(self, msg: Message):
