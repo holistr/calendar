@@ -28,8 +28,11 @@ class Command(BaseCommand):
             text=f'Выберите категорию: \n {goals_categories_str}'
         )
         is_running = True
+        run = 0
 
         while is_running:
+            run += 1
+            print(f'Счетчик choose_category {run}')
             res = self.tg_client.get_updates(offset=self.offset)
             for item in res.result:
                 self.offset = item.update_id + 1
@@ -82,6 +85,7 @@ class Command(BaseCommand):
                         chat_id=item.message.chat.id,
                         text=f'Цель {goal.title} создана'
                     )
+                    is_running = False
 
     def get_goals(self, msg: Message, tg_user: TgUser):
         goals = Goal.objects.filter(
