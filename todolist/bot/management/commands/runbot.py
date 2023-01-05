@@ -1,43 +1,125 @@
+import datetime
+
 from django.core.management import BaseCommand
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
 from bot.tg.schemas import Message
+from goals.models import Goal, GoalCategory
 
 
 class Command(BaseCommand):
     help = 'Runs telegram bot'
-    tg_client = TgClient('5638033773:AAGTEgo0_mQaUTTrgCMj53d5t4cFzvULI24')
 
-    def handle_unverified_user(self, msg: Message, tg_user:TgUser):
-        code = '123'
-        tg_user.verification_code = code
-        tg_user.save()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tg_client = TgClient('5638033773:AAGTEgo0_mQaUTTrgCMj53d5t4cFzvULI24')
+        self.offset = 0
+
+    def choose_category(self, msg: Message, tg_user: TgUser):
+        goal_categories = GoalCategory.objects.filter(
+            board__participants__user=tg_user.user,
+            is_deleted=False,
+        )
+        goals_categories_str = '\n'.join(['- ' + goal.title for goal in goal_categories])
+
         self.tg_client.send_message(
             chat_id=msg.chat.id,
-            text=f'{code}'
+            text=f'Выберите категорию: \n {goals_categories_str}'
+        )
+        is_running = True
+
+        while is_running:
+            res = self.tg_client.get_updates(offset=self.offset)
+            for item in res.result:
+                self.offset = item.update_id + 1
+                if hasattr(item, 'message'):
+                    category = goal_categories.filter(title=item.message.text).first()
+                    if category:
+                        self.create_goal(item.message, tg_user, category)
+                        is_running = False
+                    elif item.message.text == '/cancel':
+                        self.tg_client.send_message(
+                            chat_id=item.message.chat.id,
+                            text='Операция отменена'
+                        )
+                        is_running = False
+                    else:
+                        self.tg_client.send_message(
+                            chat_id=item.message.chat.id,
+                            text=f'Категория с названием {item.message.text} не существует'
+                        )
+
+    def create_goal(self, msg: Message, tg_user: TgUser, category: GoalCategory):
+
+        self.tg_client.send_message(
+            chat_id=msg.chat.id,
+            text='Введите, пожалуйста, заголовок для создания цели'
         )
 
-    def handle_user(self, msg: Message):
+        is_running = True
+
+        while is_running:
+            res = self.tg_client.get_updates(offset=self.offset)
+            for item in res.result:
+                self.offset = item.update_id + 1
+                if item.message.text == '/cancel':
+                    self.tg_client.send_message(
+                        chat_id=item.message.chat.id,
+                        text='Операция отменена'
+                    )
+                    is_running = False
+                else:
+                    goal = Goal.objects.create(
+                        category=category,
+                        user=tg_user.user,
+                        title=item.message.text,
+                        due_date=datetime.date.today() + datetime.timedelta(days=14),
+                        description='from calendar_bot'
+
+                    )
+                    self.tg_client.send_message(
+                        chat_id=item.message.chat.id,
+                        text=f'Цель {goal.title} создана'
+                    )
+
+    def get_goals(self, msg: Message, tg_user: TgUser):
+        goals = Goal.objects.filter(
+            category__board__participants__user=tg_user.user,
+        ).exclude(status=Goal.Status.archived)
+        goals_str = '\n'.join(['- ' + goal.title for goal in goals])
+
+        self.tg_client.send_message(
+            chat_id=msg.chat.id,
+            text=f'Вот список ваших целей: \n {goals_str}'
+        )
+
+    def handle_message(self, msg: Message):
         tg_user, created = TgUser.objects.get_or_create(
             tg_user_id=msg.msg_from.id,
             tg_chat_id=msg.chat.id,
-
         )
         if created:
             tg_user.generate_verification_code()
             self.tg_client.send_message(
                 chat_id=msg.chat.id,
-                text=f"Подвердите, пожалуйста, свой аккаунт."
+                text=f"Подвердите, пожалуйста, свой аккаунт. "
                      f"Для подтверждения необходимо ввести код: {tg_user.verification_code} на сайте"
             )
-
+        if msg.text == '/goals':
+            self.get_goals(msg, tg_user)
+        elif msg.text == '/create':
+            self.choose_category(msg, tg_user)
+        else:
+            self.tg_client.send_message(
+                chat_id=msg.chat.id,
+                text=f'Неизвестная команда: {msg.text}'
+            )
 
     def handle(self, *args, **options):
-        offset = 0
         while True:
-            res = self.tg_client.get_updates(offset=offset)
+            res = self.tg_client.get_updates(offset=self.offset)
             for item in res.result:
-                offset = item.update_id + 1
-                self.handle_user(item.message)
-                # print(item.message)
+                self.offset = item.update_id + 1
+                if hasattr(item, 'message'):
+                    self.handle_message(item.message)

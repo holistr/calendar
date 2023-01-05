@@ -8,8 +8,7 @@ services:
       - api
     ports:
       - '80:80'
-#    networks:
-#      - backend
+
 
   api:
     build:
@@ -27,8 +26,7 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-#    networks:
-#      - backend
+
 
   migrations:
      build:
@@ -47,6 +45,25 @@ services:
      command: >
        sh -c "python3 todolist/manage.py migrate"
 
+  bot:
+    build:
+      context: .
+    environment:
+      POSTGRES_HOST: 'db'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: '123456'
+      POSTGRES_DB: 'postgres'
+      SECRET_KEY: 'very_secret_key'
+      POSTGRES_PORT: '5432'
+      DEBUG: True
+    command: >
+      sh -c "python3 todolist/manage.py runbot"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+
   db:
     image: postgres:latest
     environment:
@@ -58,8 +75,7 @@ services:
       - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
-#    networks:
-#      - backend
+
 
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -d postgres']

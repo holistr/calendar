@@ -1,6 +1,3 @@
-import random
-import string
-
 from django.utils.crypto import get_random_string
 from django.core.validators import MinLengthValidator
 from django.db import models
