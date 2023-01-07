@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.core.management import BaseCommand
 
@@ -48,7 +48,6 @@ class Command(BaseCommand):
         )
         STATE.set_state(TgState.CATEGORY_CHOOSE)
 
-
     def check_category(self, msg: Message):
         category = GoalCategory.objects.filter(title=msg.text).first()
         if category:
@@ -87,7 +86,7 @@ class Command(BaseCommand):
 
         self.tg_client.send_message(
             chat_id=msg.chat.id,
-            text=f'Вот "список" ваших целей:\n {goals_str}'
+            text=f'Вот список ваших целей:\n {goals_str}'
         )
 
     def cancel_operation(self, msg: Message):
@@ -118,7 +117,7 @@ class Command(BaseCommand):
         elif STATE.state == TgState.CATEGORY_CHOOSE:
             self.check_category(msg)
         elif STATE.state == TgState.GOAL_CREATE:
-            self.create_goal(msg)
+            self.create_goal(msg, tg_user)
 
         else:
             self.tg_client.send_message(
