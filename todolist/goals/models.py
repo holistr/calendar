@@ -68,7 +68,7 @@ class GoalCategory(models.Model):
         verbose_name_plural = 'Категории'
 
     board = models.ForeignKey(
-        Board, verbose_name="Доска", on_delete=models.PROTECT, related_name="categories"
+        Board, verbose_name='Доска', on_delete=models.PROTECT, related_name='categories'
     )
     title = models.CharField(verbose_name='Название', max_length=255)
     user = models.ForeignKey('core.User', verbose_name='Автор', on_delete=models.PROTECT)
@@ -108,7 +108,7 @@ class Goal(models.Model):
     priority = models.PositiveSmallIntegerField(
         verbose_name='Приоритет', choices=Priority.choices, default=Priority.medium
     )
-    due_date = models.DateField(verbose_name='Дата выполнения')
+    due_date = models.DateField(verbose_name='Дата выполнения', null=True, blank=True)
     user = models.ForeignKey('core.User', verbose_name='Автор', on_delete=models.PROTECT)
     category = models.ForeignKey(GoalCategory, verbose_name='Категория', related_name='goals', on_delete=models.CASCADE)
     created = models.DateTimeField(verbose_name='Дата создания')

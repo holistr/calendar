@@ -1,10 +1,12 @@
+import requests
 from rest_framework import permissions
+from typing import Any
 
-from goals.models import BoardParticipant
+from goals.models import BoardParticipant, GoalCategory, Goal, GoalComment, Board
 
 
 class BoardPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request: requests, view: Any, obj: Board) -> bool:
         if not request.user.is_authenticated:
             return False
         if request.method in permissions.SAFE_METHODS:
@@ -18,7 +20,7 @@ class BoardPermissions(permissions.BasePermission):
 
 class GoalCategoryPermissions(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, category):
+    def has_object_permission(self, request: requests, view: Any, category: GoalCategory) -> bool:
         if not request.user.is_authenticated:
             return False
 
@@ -37,7 +39,7 @@ class GoalCategoryPermissions(permissions.BasePermission):
 
 class GoalPermissions(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, goal):
+    def has_object_permission(self, request: requests, view: Any, goal: Goal) -> bool:
         if not request.user.is_authenticated:
             return False
 
@@ -55,7 +57,7 @@ class GoalPermissions(permissions.BasePermission):
 
 
 class CommentPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, comment):
+    def has_object_permission(self, request: requests, view: Any, comment: GoalComment) -> bool:
         if not request.user.is_authenticated:
             return False
         if request.method in permissions.SAFE_METHODS:

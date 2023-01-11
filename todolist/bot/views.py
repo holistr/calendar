@@ -1,3 +1,4 @@
+import requests
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +15,7 @@ class BotVerifyView(generics.UpdateAPIView):
     http_method_names = ['patch']
     serializer_class = TgUserSerializer
 
-    def patch(self, request, *args, **kwargs):
+    def patch(self, request: requests, *args: str, **kwargs: int) -> Response:
         data = self.serializer_class(request.data).data
         tg_client = TgClient('5638033773:AAGTEgo0_mQaUTTrgCMj53d5t4cFzvULI24')
         tg_user = TgUser.objects.filter(verification_code=data['verification_code']).first()
