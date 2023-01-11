@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   frontend:
@@ -8,8 +8,6 @@ services:
       - api
     ports:
       - '80:80'
-#    networks:
-#      - backend
 
   api:
     image: holistr/calendar_access_token:$GITHUB_REF_NAME-$GITHUB_RUN_ID
@@ -23,6 +21,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
+      TG_BOT_API_TOKEN: ${TG_BOT_API_TOKEN}
     depends_on:
       db:
         condition: service_healthy
@@ -82,8 +81,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-#    networks:
-#      - backend
 
 
 volumes:
