@@ -1,4 +1,4 @@
-��# CALENDAR
+# CALENDAR
 Calendar is a service for scheduling meetings, events and cases.
 
 ## Stack
